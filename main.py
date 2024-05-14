@@ -99,6 +99,10 @@ def search_hotels():
 
         # Continue with scraping hotels
         hotels = scrape_hotels(city, checkin_date, checkout_date)
+        if hotels:
+            hotel_infos(hotels)
+        else:
+            messagebox.showinfo("Info", "No hotels found.")
 
     except ValueError:
         error_window = tk.Toplevel(root)
@@ -107,6 +111,19 @@ def search_hotels():
         error_label.pack()
         ok_button = ttk.Button(error_window, text="OK", command=error_window.destroy)
         ok_button.pack()
+
+
+def hotel_infos(hotels):
+    hotels_text.delete(1.0, tk.END)
+    with open("hotel_information.txt", "w") as f:
+        for idx, hotel in enumerate(hotels, start=1):
+            hotels_text.insert(tk.END, f"Hotel {idx}:\n")
+            f.write(f"Hotel {idx}:\n")
+            for key, value in hotel.items():
+                hotels_text.insert(tk.END, f"{key}: {value}\n")
+                f.write(f"{key}: {value}\n")
+            hotels_text.insert(tk.END, "\n")
+            f.write("\n")
 
 
 # GUI setup
@@ -133,18 +150,21 @@ city_combobox.grid(row=2, column=1, pady=5)
 checkin_label = ttk.Label(main_frame, text="Check-in Date:")
 checkin_label.grid(row=3, column=0, sticky="w")
 checkin_entry = ttk.Entry(main_frame)
-checkin_entry.grid(row=3, column=1, pady=5)
+checkin_entry.grid(row=3, column=1, pady=3)
 checkin_button = ttk.Button(main_frame, text="Select Date", command=select_checkin_date)
 checkin_button.grid(row=3, column=2)
 
 checkout_label = ttk.Label(main_frame, text="Check-out Date:")
 checkout_label.grid(row=4, column=0, sticky="w")
 checkout_entry = ttk.Entry(main_frame)
-checkout_entry.grid(row=4, column=1, pady=5)
+checkout_entry.grid(row=4, column=1, pady=3)
 checkout_button = ttk.Button(main_frame, text="Select Date", command=select_checkout_date)
 checkout_button.grid(row=4, column=2)
 
 search_button = ttk.Button(main_frame, text="Search Hotels", command=search_hotels)
-search_button.grid(row=5, column=0, columnspan=2, pady=10)
+search_button.grid(row=5, column=0, columnspan=2, padx=30, pady=15)
+
+hotels_text = tk.Text(main_frame, height=15, width=80)
+hotels_text.grid(row=6, column=0, columnspan=3)
 
 root.mainloop()
