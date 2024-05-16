@@ -24,10 +24,8 @@ def scrape_hotels(city, checkin_date, checkout_date):
         soup = BeautifulSoup(response.text, 'html.parser')
         hotels = soup.findAll('div', {'data-testid': 'property-card'})
 
-        # Store hotel data
         hotel_data = []
 
-        # Loop over the hotel elements and extract the desired data
         for hotel in hotels:
             name_element = hotel.find('div', {'data-testid': 'title'})
             address_element = hotel.find('a', {'data-testid': 'property-address'})
@@ -89,7 +87,6 @@ def search_hotels():
         return
 
     try:
-        # Convert check-in and check-out dates to datetime objects
         checkin_date = datetime.strptime(checkin_date_str, '%d-%m-%Y').date()
         checkout_date = datetime.strptime(checkout_date_str, '%d-%m-%Y').date()
 
@@ -97,7 +94,6 @@ def search_hotels():
             messagebox.showinfo("Error", "Check-out date should be later than check-in date.")
             return
 
-        # Continue with scraping hotels
         hotels = scrape_hotels(city, checkin_date, checkout_date)
         if hotels:
             hotel_infos(hotels)
@@ -126,45 +122,44 @@ def hotel_infos(hotels):
             f.write("\n")
 
 
-# GUI setup
+# GUI
 root = tk.Tk()
 root.title("Hotel Program")
 
-main_frame = ttk.Frame(root, padding="20")
-main_frame.grid(row=0, column=0)
+program_frame = ttk.Frame(root, padding="20")
+program_frame.grid(row=0, column=0)
 
-# Adding the label for "Hotel Searcher"
-searcher_label = ttk.Label(main_frame, text="Hotel Searcher")
+searcher_label = ttk.Label(program_frame, text="Hotel Searcher")
 searcher_label.grid(row=0, column=0, columnspan=3)
 
-empty_label = ttk.Label(main_frame, text="")
-empty_label.grid(row=1, column=0)  # Add an empty row for spacing
+empty_label = ttk.Label(program_frame, text="")
+empty_label.grid(row=1, column=0)  # empty row
 
-city_label = ttk.Label(main_frame, text="Select City:")
+city_label = ttk.Label(program_frame, text="Select City:")
 city_label.grid(row=2, column=0, sticky="w")
 
-cities = ['Paris', 'London', 'Berlin', 'Munich', 'Barcelona', 'Los Angeles', 'Miami', 'Sydney', 'Tokyo', 'Osaka']
-city_combobox = ttk.Combobox(main_frame, values=cities)
+cities = ['Rome', 'Paris', 'Amsterdam', 'London', 'Prague', 'Athens', 'Munich', 'Venice', 'Lisbon', 'Dublin']
+city_combobox = ttk.Combobox(program_frame, values=cities)
 city_combobox.grid(row=2, column=1, pady=5)
 
-checkin_label = ttk.Label(main_frame, text="Check-in Date:")
+checkin_label = ttk.Label(program_frame, text="Check-in Date:")
 checkin_label.grid(row=3, column=0, sticky="w")
-checkin_entry = ttk.Entry(main_frame)
+checkin_entry = ttk.Entry(program_frame)
 checkin_entry.grid(row=3, column=1, pady=3)
-checkin_button = ttk.Button(main_frame, text="Select Date", command=select_checkin_date)
+checkin_button = ttk.Button(program_frame, text="Select Date", command=select_checkin_date)
 checkin_button.grid(row=3, column=2)
 
-checkout_label = ttk.Label(main_frame, text="Check-out Date:")
+checkout_label = ttk.Label(program_frame, text="Check-out Date:")
 checkout_label.grid(row=4, column=0, sticky="w")
-checkout_entry = ttk.Entry(main_frame)
+checkout_entry = ttk.Entry(program_frame)
 checkout_entry.grid(row=4, column=1, pady=3)
-checkout_button = ttk.Button(main_frame, text="Select Date", command=select_checkout_date)
+checkout_button = ttk.Button(program_frame, text="Select Date", command=select_checkout_date)
 checkout_button.grid(row=4, column=2)
 
-search_button = ttk.Button(main_frame, text="Search Hotels", command=search_hotels)
+search_button = ttk.Button(program_frame, text="Search Hotels", command=search_hotels)
 search_button.grid(row=5, column=0, columnspan=2, padx=30, pady=15)
 
-hotels_text = tk.Text(main_frame, height=15, width=80)
+hotels_text = tk.Text(program_frame, height=15, width=80)
 hotels_text.grid(row=6, column=0, columnspan=3)
 
 root.mainloop()
