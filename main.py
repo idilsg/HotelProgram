@@ -13,8 +13,11 @@ def scrape_hotels(city, checkin_date, checkout_date):
         # Construct URL for Booking.com with the provided parameters
         url = (f'https://www.booking.com/searchresults.html?ss={city}&checkin={checkin_date}&checkout={checkout_date}&g'
                f'roup_adults=2&no_rooms=1&group_children=0')
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chr'
-                                 'ome/94.0.4606.81 Safari/537.36'}
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (X11; CrOS x86_64 8172.45.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome / 51.'
+                          '0.2704.64 Safari / 537.36',
+            'Accept-Language': 'en-US, en;q=0.5'
+        }
 
         # Send HTTP request and fetch the hotel information from Booking.com
         response = requests.get(url, headers=headers)
