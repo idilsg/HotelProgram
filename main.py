@@ -49,7 +49,7 @@ def scrape_hotels(city, checkin_date, checkout_date):
                     price_value = price_value_match.group().replace(",", "")  # Remove commas
                     try:
                         price_value = int(price_value)
-                        price = f"€ {price_value / 35:.2f}"
+                        price = f"€ {price_value / 30:.2f}"
                     except ValueError:
                         pass
 
