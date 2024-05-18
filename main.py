@@ -31,10 +31,10 @@ def scrape_hotels(city, checkin_date, checkout_date):
 
         for hotel in hotels:
             name_element = hotel.find('div', {'data-testid': 'title'})
-            address_element = hotel.find('a', {'data-testid': 'property-address'})
-            distance_element = hotel.find('div', {'data-testid': 'distanceFromCenter'})
-            rating_element = hotel.find('span', {'data-testid': 'guest-rating-value'})
-            price_element = hotel.find('div', {'data-testid': 'price-value'})
+            address_element = hotel.find('span', {'data-testid': 'address'})
+            distance_element = hotel.find('span', {'data-testid': 'distance'})
+            rating_element = hotel.find('div', {'data-testid': 'review-score'})
+            price_element = hotel.find('span', {'data-testid': 'price-and-discounted-price'})
 
             name = name_element.text.strip() if name_element else 'NOT GIVEN'
             address = address_element.text.strip() if address_element else 'NOT GIVEN'
@@ -42,10 +42,19 @@ def scrape_hotels(city, checkin_date, checkout_date):
             rating = rating_element.text.strip() if rating_element else 'NOT GIVEN'
             price = price_element.text.strip() if price_element else 'NOT GIVEN'
 
-            hotel_data.append({'Name': name, 'Address': address,
-                               'Distance': distance, 'Rating': rating, 'Price': price})
+            if selected_option.get() == "Euro":
+                price_value = price.split(" ")[1]
+                if price_value.isdigit():
+                    price = f"€ {int(price_value) / 35}"
+
+            hotel_data.append({'Name': name,
+                               'Address': address,
+                               'Distance': distance,
+                               'Rating': rating,
+                               'Price': price})
 
         return hotel_data[:5]  # Return top 5 hotels
+
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
@@ -125,6 +134,7 @@ def hotel_infos(hotels):
             f.write("\n")
 
 
+
 # GUI
 root = tk.Tk()
 root.title("Hotel Program")
@@ -138,21 +148,21 @@ searcher_label.grid(row=0, column=0, columnspan=3)
 empty_label = ttk.Label(program_frame, text="")
 empty_label.grid(row=1, column=0)  # empty row
 
-city_label = ttk.Label(program_frame, text="Select City:")
+city_label = ttk.Label(program_frame, text="Select City")
 city_label.grid(row=2, column=0, sticky="w")
 
 cities = ['Rome', 'Paris', 'Amsterdam', 'London', 'Prague', 'Athens', 'Munich', 'Venice', 'Lisbon', 'Dublin']
 city_combobox = ttk.Combobox(program_frame, values=cities)
 city_combobox.grid(row=2, column=1, pady=5)
 
-checkin_label = ttk.Label(program_frame, text="Check-in Date:")
+checkin_label = ttk.Label(program_frame, text="Check in Date")
 checkin_label.grid(row=3, column=0, sticky="w")
 checkin_entry = ttk.Entry(program_frame)
 checkin_entry.grid(row=3, column=1, pady=3)
 checkin_button = ttk.Button(program_frame, text="Select Date", command=select_checkin_date)
 checkin_button.grid(row=3, column=2)
 
-checkout_label = ttk.Label(program_frame, text="Check-out Date:")
+checkout_label = ttk.Label(program_frame, text="Check out Date")
 checkout_label.grid(row=4, column=0, sticky="w")
 checkout_entry = ttk.Entry(program_frame)
 checkout_entry.grid(row=4, column=1, pady=3)
@@ -161,6 +171,17 @@ checkout_button.grid(row=4, column=2)
 
 search_button = ttk.Button(program_frame, text="Search Hotels", command=search_hotels)
 search_button.grid(row=5, column=0, columnspan=2, padx=30, pady=15)
+
+
+option_frame = ttk.Frame(program_frame)
+option_frame.grid(row=5, column=2, padx=30, pady=15)
+
+selected_option = tk.StringVar(value="TL")
+
+option_a_radio = ttk.Radiobutton(option_frame, text="TL-", variable=selected_option, value="TL+")
+option_a_radio.grid(row=0, column=0, padx=5)
+option_b_radio = ttk.Radiobutton(option_frame, text="Euro-", variable=selected_option, value="Euro+")
+option_b_radio.grid(row=0, column=1, padx=5)
 
 hotels_text = tk.Text(program_frame, height=15, width=80)
 hotels_text.grid(row=6, column=0, columnspan=3)
