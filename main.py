@@ -5,6 +5,7 @@ from tkcalendar import Calendar
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
+import re
 
 
 # Function to scrape hotel information from Booking.com
@@ -42,13 +43,15 @@ def scrape_hotels(city, checkin_date, checkout_date):
             rating = rating_element.text.strip() if rating_element else 'NOT GIVEN'
             price = price_element.text.strip() if price_element else 'NOT GIVEN'
 
-            if selected_option.get() == "Euro" and price.startswith("TL "):
-                price_value = price.split(" ")[1].replace(",", "")
-                try:
-                    price_value = int(price_value)
-                    price = f"€ {price_value / 35:.2f}"
-                except ValueError:
-                    pass
+            if selected_option.get() == "Euro" and re.search(r'\bTL\b', price):
+                price_value_match = re.search(r'[\d,]+', price)
+                if price_value_match:
+                    price_value = price_value_match.group().replace(",", "")  # Remove commas
+                    try:
+                        price_value = int(price_value)
+                        price = f"€ {price_value / 35:.2f}"
+                    except ValueError:
+                        pass
 
             hotel_data.append({'Name': name,
                                'Address': address,
@@ -173,7 +176,6 @@ checkout_button.grid(row=4, column=2)
 
 search_button = ttk.Button(program_frame, text="Search Hotels", command=search_hotels)
 search_button.grid(row=5, column=0, columnspan=2, padx=30, pady=15)
-
 
 option_frame = ttk.Frame(program_frame)
 option_frame.grid(row=5, column=2, padx=30, pady=15)
