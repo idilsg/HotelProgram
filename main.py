@@ -42,10 +42,13 @@ def scrape_hotels(city, checkin_date, checkout_date):
             rating = rating_element.text.strip() if rating_element else 'NOT GIVEN'
             price = price_element.text.strip() if price_element else 'NOT GIVEN'
 
-            if selected_option.get() == "Euro":
-                price_value = price.split(" ")[1]
-                if price_value.isdigit():
-                    price = f"€ {int(price_value) / 35}"
+            if selected_option.get() == "Euro" and price.startswith("TL "):
+                price_value = price.split(" ")[1].replace(",", "")
+                try:
+                    price_value = int(price_value)
+                    price = f"€ {price_value / 35:.2f}"
+                except ValueError:
+                    pass
 
             hotel_data.append({'Name': name,
                                'Address': address,
@@ -134,7 +137,6 @@ def hotel_infos(hotels):
             f.write("\n")
 
 
-
 # GUI
 root = tk.Tk()
 root.title("Hotel Program")
@@ -178,9 +180,9 @@ option_frame.grid(row=5, column=2, padx=30, pady=15)
 
 selected_option = tk.StringVar(value="TL")
 
-option_a_radio = ttk.Radiobutton(option_frame, text="TL-", variable=selected_option, value="TL+")
+option_a_radio = ttk.Radiobutton(option_frame, text="TL", variable=selected_option, value="TL")
 option_a_radio.grid(row=0, column=0, padx=5)
-option_b_radio = ttk.Radiobutton(option_frame, text="Euro-", variable=selected_option, value="Euro+")
+option_b_radio = ttk.Radiobutton(option_frame, text="Euro", variable=selected_option, value="Euro")
 option_b_radio.grid(row=0, column=1, padx=5)
 
 hotels_text = tk.Text(program_frame, height=15, width=80)
