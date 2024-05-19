@@ -31,15 +31,18 @@ def scrape_hotels(city, checkin_date, checkout_date):
 
         for hotel in hotels:
             name_element = hotel.find('div', {'data-testid': 'title'})
-            address_element = hotel.find('span', {'data-testid': 'address'})
-            distance_element = hotel.find('span', {'data-testid': 'distance'})
-            rating_element = hotel.find('div', {'data-testid': 'review-score'})
-            price_element = hotel.find('span', {'data-testid': 'price-and-discounted-price'})
-
             name = name_element.text.strip() if name_element else 'NOT GIVEN'
+
+            address_element = hotel.find('span', {'data-testid': 'address'})
             address = address_element.text.strip() if address_element else 'NOT GIVEN'
+
+            distance_element = hotel.find('span', {'data-testid': 'distance'})
             distance = distance_element.text.strip() if distance_element else 'NOT GIVEN'
+
+            rating_element = hotel.find('div', {'data-testid': 'review-score'})
             rating = rating_element.text.strip() if rating_element else 'NOT GIVEN'
+
+            price_element = hotel.find('span', {'data-testid': 'price-and-discounted-price'})
             price = price_element.text.strip() if price_element else 'NOT GIVEN'
 
             if selected_option.get() == "Euro" and re.search(r'\bTL\b', price):
@@ -128,16 +131,22 @@ def search_hotels():
 
 
 def hotel_infos(hotels):
-    hotels_text.delete(1.0, tk.END)
-    with open("hotel_information.txt", "w") as f:
-        for idx, hotel in enumerate(hotels, start=1):
-            hotels_text.insert(tk.END, f"Hotel {idx}:\n")
-            f.write(f"Hotel {idx}:\n")
-            for key, value in hotel.items():
-                hotels_text.insert(tk.END, f"{key}: {value}\n")
-                f.write(f"{key}: {value}\n")
-            hotels_text.insert(tk.END, "\n")
-            f.write("\n")
+    hotel_window = tk.Toplevel(root)
+    hotel_window.title("Hotel Information")
+    hotel_window.geometry("600x400")  # Set the size of the new window
+    hotel_frame = ttk.Frame(hotel_window, padding="10")
+    hotel_frame.grid(row=0, column=0, sticky="nsew")
+
+    row_num = 0
+    for idx, hotel in enumerate(hotels, start=1):
+        hotel_label = ttk.Label(hotel_frame, text=f"Hotel {idx}:")
+        hotel_label.grid(row=row_num, column=0, sticky="w", pady=(5, 0))
+        row_num += 1
+        for key, value in hotel.items():
+            info_label = ttk.Label(hotel_frame, text=f"{key}: {value}")
+            info_label.grid(row=row_num, column=0, sticky="w")
+            row_num += 1
+        row_num += 1  # Add extra space between hotels
 
 
 root = tk.Tk()
@@ -186,8 +195,5 @@ option_a_radio = ttk.Radiobutton(option_frame, text="TL", variable=selected_opti
 option_a_radio.grid(row=0, column=0, padx=5)
 option_b_radio = ttk.Radiobutton(option_frame, text="Euro", variable=selected_option, value="Euro")
 option_b_radio.grid(row=0, column=1, padx=5)
-
-hotels_text = tk.Text(program_frame, height=15, width=80)
-hotels_text.grid(row=6, column=0, columnspan=3)
 
 root.mainloop()
