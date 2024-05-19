@@ -139,7 +139,7 @@ def hotel_infos(hotels):
     hotel_frame.grid(row=0, column=0, sticky="nsew")
 
     row_num = 0
-    with open("hotel_information.txt", "w") as f: # opening the file
+    with open("hotel_information.txt", "w") as f:  # opening the file
         for idx, hotel in enumerate(hotels, start=1):
             hotel_label = ttk.Label(hotel_frame, text=f"Hotel {idx}:")
             hotel_label.grid(row=row_num, column=0, sticky="w", pady=(5, 0))
