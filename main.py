@@ -131,22 +131,27 @@ def search_hotels():
 
 
 def hotel_infos(hotels):
+    # new window
     hotel_window = tk.Toplevel(root)
     hotel_window.title("Hotel Information")
-    hotel_window.geometry("600x400")  # Set the size of the new window
+    hotel_window.geometry("600x400")
     hotel_frame = ttk.Frame(hotel_window, padding="10")
     hotel_frame.grid(row=0, column=0, sticky="nsew")
 
     row_num = 0
-    for idx, hotel in enumerate(hotels, start=1):
-        hotel_label = ttk.Label(hotel_frame, text=f"Hotel {idx}:")
-        hotel_label.grid(row=row_num, column=0, sticky="w", pady=(5, 0))
-        row_num += 1
-        for key, value in hotel.items():
-            info_label = ttk.Label(hotel_frame, text=f"{key}: {value}")
-            info_label.grid(row=row_num, column=0, sticky="w")
+    with open("hotel_information.txt", "w") as f: # opening the file
+        for idx, hotel in enumerate(hotels, start=1):
+            hotel_label = ttk.Label(hotel_frame, text=f"Hotel {idx}:")
+            hotel_label.grid(row=row_num, column=0, sticky="w", pady=(5, 0))
+            f.write(f"Hotel {idx}:\n")
             row_num += 1
-        row_num += 1  # Add extra space between hotels
+            for key, value in hotel.items():
+                info_label = ttk.Label(hotel_frame, text=f"{key}: {value}")
+                info_label.grid(row=row_num, column=0, sticky="w")
+                f.write(f"{key}: {value}\n")
+                row_num += 1
+            row_num += 1
+            f.write("\n")
 
 
 root = tk.Tk()
