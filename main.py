@@ -8,10 +8,9 @@ from bs4 import BeautifulSoup
 import re
 
 
-# Function to scrape hotel information from Booking.com
+# scraping hotel informations from the website
 def scrape_hotels(city, checkin_date, checkout_date):
     try:
-        # Construct URL for Booking.com with the provided parameters
         url = (f'https://www.booking.com/searchresults.html?ss={city}&checkin={checkin_date}&checkout={checkout_date}&g'
                f'roup_adults=2&no_rooms=1&group_children=0')
         headers = {
@@ -20,14 +19,14 @@ def scrape_hotels(city, checkin_date, checkout_date):
             'Accept-Language': 'en-US, en;q=0.5'
         }
 
-        # Send HTTP request and fetch the hotel information from Booking.com
+        # http request and fetching hotel infos
         response = requests.get(url, headers=headers)
         response.raise_for_status()
 
-        # Parse HTML content using BeautifulSoup
         soup = BeautifulSoup(response.text, 'html.parser')
         hotels = soup.findAll('div', {'data-testid': 'property-card'})
 
+        # hotels list
         hotel_data = []
 
         for hotel in hotels:
@@ -46,20 +45,21 @@ def scrape_hotels(city, checkin_date, checkout_date):
             if selected_option.get() == "Euro" and re.search(r'\bTL\b', price):
                 price_value_match = re.search(r'[\d,]+', price)
                 if price_value_match:
-                    price_value = price_value_match.group().replace(",", "")  # Remove commas
+                    price_value = price_value_match.group().replace(",", "")
                     try:
                         price_value = int(price_value)
                         price = f"€ {price_value / 30:.2f}"
                     except ValueError:
                         pass
 
+            # hotel informations are stored in a dictionary
             hotel_data.append({'Name': name,
                                'Address': address,
                                'Distance': distance,
                                'Rating': rating,
                                'Price': price})
 
-        return hotel_data[:5]  # Return top 5 hotels
+        return hotel_data[:5]  # top 5 hotels
 
     except Exception as e:
         messagebox.showerror("Error", f"An error occurred: {str(e)}")
@@ -69,12 +69,12 @@ def select_checkin_date():
     def set_checkin_date():
         try:
             checkin_entry.delete(0, tk.END)
-            checkin_entry.insert(0, cal.selection_get().strftime('%d-%m-%Y'))  # Format the date
+            checkin_entry.insert(0, cal.selection_get().strftime('%d-%m-%Y'))
         finally:
             top.destroy()
 
     top = tk.Toplevel(root)
-    cal = Calendar(top, selectmode='day', date_pattern='d-m-Y')  # Set the date pattern
+    cal = Calendar(top, selectmode='day', date_pattern='d-m-Y')
     cal.pack()
     ok_button = tk.Button(top, text="OK", command=set_checkin_date)
     ok_button.pack()
@@ -84,12 +84,12 @@ def select_checkout_date():
     def set_checkout_date():
         try:
             checkout_entry.delete(0, tk.END)
-            checkout_entry.insert(0, cal.selection_get().strftime('%d-%m-%Y'))  # Format the date
+            checkout_entry.insert(0, cal.selection_get().strftime('%d-%m-%Y'))
         finally:
             top.destroy()
 
     top = tk.Toplevel(root)
-    cal = Calendar(top, selectmode='day', date_pattern='d-m-Y')  # Set the date pattern
+    cal = Calendar(top, selectmode='day', date_pattern='d-m-Y')
     cal.pack()
     ok_button = tk.Button(top, text="OK", command=set_checkout_date)
     ok_button.pack()
@@ -140,7 +140,6 @@ def hotel_infos(hotels):
             f.write("\n")
 
 
-# GUI
 root = tk.Tk()
 root.title("Hotel Program")
 
@@ -156,6 +155,7 @@ empty_label.grid(row=1, column=0)  # empty row
 city_label = ttk.Label(program_frame, text="Select City")
 city_label.grid(row=2, column=0, sticky="w")
 
+# cities list
 cities = ['Rome', 'Paris', 'Amsterdam', 'London', 'Prague', 'Athens', 'Munich', 'Venice', 'Lisbon', 'Dublin']
 city_combobox = ttk.Combobox(program_frame, values=cities)
 city_combobox.grid(row=2, column=1, pady=5)
